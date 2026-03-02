@@ -13,10 +13,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/chat', async (req, res) => {
     try {
         const { message, history } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.AI_API_KEY;
+        const apiUrl = process.env.AI_API_URL;
 
-        if (!apiKey) {
-            return res.status(500).json({ error: 'API key not configured' });
+        if (!apiKey || !apiUrl) {
+            return res.status(500).json({ error: 'API key or URL not configured' });
         }
 
         const systemPrompt = `Você é o Assistente FPTA, o assistente de IA da plataforma de gestão da Federação Portuguesa de Tiro com Arco (FPTA). Você é fluente em Português de Portugal e Inglês. Responda sempre no idioma em que for perguntado.
@@ -66,7 +67,7 @@ Se lhe perguntarem sobre dados específicos de atletas que não conhece, indique
         }
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent?key=${apiKey}`,
+            `${apiUrl}?key=${apiKey}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
