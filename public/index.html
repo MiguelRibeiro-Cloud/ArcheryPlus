@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcheryPlus | FPTA - Federação Portuguesa de Tiro com Arco</title>
+    <meta name="description" content="Plataforma de gestão da Federação Portuguesa de Tiro com Arco">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23EDEDED' stroke='%23ccc' stroke-width='1'/><circle cx='50' cy='50' r='38' fill='%23333'/><circle cx='50' cy='50' r='28' fill='%2349B2E8'/><circle cx='50' cy='50' r='18' fill='%23E8293A'/><circle cx='50' cy='50' r='8' fill='%23FFD700'/></svg>">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- App Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile sidebar backdrop -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleMobileMenu()"></div>
+
+        <!-- ===================== SIDEBAR ===================== -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(255,193,7,0.4)" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="6" fill="#ffc107" opacity="0.9"/>
+                    <line x1="50" y1="4" x2="50" y2="96" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                    <line x1="4" y1="50" x2="96" y2="50" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                </svg>
+                <div class="brand-text">
+                    <span class="brand-name">ArcheryPlus</span>
+                    <span class="brand-subtitle">FPTA Management</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title" data-i18n="nav.main">Principal</div>
+                    <button class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span data-i18n="nav.dashboard">Painel</span>
+                    </button>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title" data-i18n="nav.management">Gestão</div>
+                    <button class="nav-item" data-page="athletes">
+                        <i class="fas fa-users"></i>
+                        <span data-i18n="nav.athletes">Atletas</span>
+                        <span class="nav-badge">30</span>
+                    </button>
+                    <button class="nav-item" data-page="tournaments">
+                        <i class="fas fa-trophy"></i>
+                        <span data-i18n="nav.tournaments">Torneios</span>
+                    </button>
+                    <button class="nav-item" data-page="standings">
+                        <i class="fas fa-medal"></i>
+                        <span data-i18n="nav.standings">Classificações</span>
+                    </button>
+                    <button class="nav-item" data-page="payments">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span data-i18n="nav.payments">Pagamentos</span>
+                        <span class="nav-badge">6</span>
+                    </button>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title" data-i18n="nav.tools">Ferramentas</div>
+                    <button class="nav-item" data-page="calendar">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span data-i18n="nav.calendar">Calendário</span>
+                    </button>
+                    <button class="nav-item" data-page="reports">
+                        <i class="fas fa-chart-bar"></i>
+                        <span data-i18n="nav.reports">Relatórios</span>
+                    </button>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <span class="version-tag">ArcheryPlus v1.0 Demo</span>
+            </div>
+        </aside>
+
+        <!-- ===================== MAIN CONTENT ===================== -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-search" style="position:relative;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="global-search" data-i18n-placeholder="header.search" placeholder="Pesquisar atletas, torneios...">
+                </div>
+                <div class="header-actions">
+                    <div class="lang-toggle">
+                        <button class="lang-btn active" data-lang="pt">PT</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                    <button class="header-btn" title="Notificações">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-dot"></span>
+                    </button>
+                    <div class="header-user">
+                        <div class="user-avatar">AD</div>
+                        <span class="user-name" data-i18n="header.admin">Administrador</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+
+                <!-- ========== DASHBOARD ========== -->
+                <section id="page-dashboard" class="page-section active">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="dashboard.title">Painel de Controlo</h1>
+                            <p class="page-subtitle" data-i18n="dashboard.welcome">Bem-vindo ao ArcheryPlus</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card green">
+                            <div class="stat-icon green"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-athletes">0</div>
+                                <div class="stat-label" data-i18n="dashboard.totalAthletes">Total de Atletas</div>
+                                <div class="stat-change up"><i class="fas fa-arrow-up"></i> +3 este mês</div>
+                            </div>
+                        </div>
+                        <div class="stat-card blue">
+                            <div class="stat-icon blue"><i class="fas fa-trophy"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-tournaments">0</div>
+                                <div class="stat-label" data-i18n="dashboard.activeTournaments">Torneios Ativos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card gold">
+                            <div class="stat-icon gold"><i class="fas fa-calendar-check"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-events">0</div>
+                                <div class="stat-label" data-i18n="dashboard.upcomingEvents">Próximos Eventos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card red">
+                            <div class="stat-icon red"><i class="fas fa-euro-sign"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-revenue">€0</div>
+                                <div class="stat-label" data-i18n="dashboard.revenue">Receita Cobrada</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Grid -->
+                    <div class="dashboard-grid">
+                        <div>
+                            <!-- Charts Row -->
+                            <div class="grid-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="dashboard.athletesByDiscipline">Atletas por Disciplina</h3>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-discipline"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="dashboard.paymentOverview">Resumo de Pagamentos</h3>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-payments"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Activity Log -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title" data-i18n="dashboard.recentActivity">Atividade Recente</h3>
+                                </div>
+                                <ul class="activity-list" id="activity-log"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div>
+                            <!-- Quick Actions -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title" data-i18n="dashboard.quickActions">Ações Rápidas</h3>
+                                </div>
+                                <div class="quick-action-grid" id="quick-actions"></div>
+                            </div>
+
+                            <!-- Upcoming Tournaments -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title" data-i18n="dashboard.upcomingTournaments">Próximos Torneios</h3>
+                                </div>
+                                <div class="event-list-sidebar" id="upcoming-tournaments-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== ATHLETES ========== -->
+                <section id="page-athletes" class="page-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="athletes.title">Gestão de Atletas</h1>
+                        </div>
+                    </div>
+                    <div class="filter-bar" id="athlete-filters"></div>
+                    <div class="text-sm text-muted mb-2" id="athlete-count"></div>
+                    <div class="card">
+                        <div class="table-container" id="athlete-table"></div>
+                    </div>
+                </section>
+
+                <!-- ========== TOURNAMENTS ========== -->
+                <section id="page-tournaments" class="page-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="tournaments.title">Gestão de Torneios</h1>
+                        </div>
+                    </div>
+                    <div id="tournament-content"></div>
+                </section>
+
+                <!-- ========== STANDINGS ========== -->
+                <section id="page-standings" class="page-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="standings.title">Classificações da Liga</h1>
+                        </div>
+                    </div>
+                    <div id="standings-content"></div>
+                </section>
+
+                <!-- ========== PAYMENTS ========== -->
+                <section id="page-payments" class="page-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="payments.title">Gestão de Pagamentos</h1>
+                        </div>
+                    </div>
+                    <div id="payment-content"></div>
+                </section>
+
+                <!-- ========== CALENDAR ========== -->
+                <section id="page-calendar" class="page-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="calendar.title">Calendário</h1>
+                        </div>
+                    </div>
+                    <div id="calendar-content"></div>
+                </section>
+
+                <!-- ========== REPORTS ========== -->
+                <section id="page-reports" class="page-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" data-i18n="reports.title">Relatórios e Estatísticas</h1>
+                        </div>
+                    </div>
+                    <div id="reports-content"></div>
+                </section>
+            </div>
+
+            <!-- Footer -->
+            <footer class="app-footer">
+                <span data-i18n="footer.text">© 2026 FPTA - Federação Portuguesa de Tiro com Arco. Todos os direitos reservados.</span>
+                <span style="margin-left:8px;opacity:0.6;" data-i18n="footer.demo">Versão Demo - ArcheryPlus</span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- ===================== MODALS ===================== -->
+
+    <!-- Athlete Modal -->
+    <div class="modal-overlay" id="athlete-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title" id="athlete-modal-title">Novo Atleta</h3>
+                <button class="modal-close" onclick="closeModal('athlete-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="athlete-form"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('athlete-modal')" data-i18n="form.cancel">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveAthlete()"><i class="fas fa-save"></i> <span data-i18n="form.save">Guardar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament Modal -->
+    <div class="modal-overlay" id="tournament-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title" id="tournament-modal-title">Novo Torneio</h3>
+                <button class="modal-close" onclick="closeModal('tournament-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="tournament-form"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('tournament-modal')" data-i18n="form.cancel">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveTournament()"><i class="fas fa-save"></i> <span data-i18n="form.save">Guardar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Entry Modal -->
+    <div class="modal-overlay" id="score-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title" id="score-modal-title"><i class="fas fa-bullseye" style="margin-right:8px;color:var(--green-primary);"></i>Registar Pontuações</h3>
+                <button class="modal-close" onclick="closeModal('score-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="score-form" style="max-height:60vh;overflow-y:auto;"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('score-modal')" data-i18n="form.cancel">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveScores()"><i class="fas fa-save"></i> <span data-i18n="form.save">Guardar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title" id="payment-modal-title"><i class="fas fa-file-invoice-dollar" style="margin-right:8px;color:var(--green-primary);"></i>Novo Pagamento</h3>
+                <button class="modal-close" onclick="closeModal('payment-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="payment-form"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('payment-modal')" data-i18n="form.cancel">Cancelar</button>
+                <button class="btn btn-primary" onclick="savePayment()"><i class="fas fa-save"></i> <span data-i18n="form.save">Guardar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== CHATBOT ===================== -->
+    <button class="chatbot-toggle" id="chatbot-toggle" title="Assistente FPTA">
+        <i class="fas fa-comments"></i>
+        <span class="badge-dot"></span>
+    </button>
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">
+            <div class="chat-avatar"><i class="fas fa-bullseye"></i></div>
+            <div class="chat-info">
+                <div class="chat-name" data-i18n="chat.title">Assistente FPTA</div>
+                <div class="chat-status">Online · Gemma 3</div>
+            </div>
+            <button class="chat-close-btn" id="chat-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chatbot-messages" id="chat-messages"></div>
+        <div class="chatbot-input">
+            <input type="text" id="chat-input" data-i18n-placeholder="chat.placeholder" placeholder="Escreva uma mensagem...">
+            <button id="chat-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- ===================== TOAST CONTAINER ===================== -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
