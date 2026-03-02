@@ -113,17 +113,19 @@ const Chatbot = (() => {
 
             removeTyping();
 
-            if (response.ok) {
-                const data = await response.json();
-                addBotMessage(data.reply);
-                history.push({ role: 'user', text: text });
-                history.push({ role: 'model', text: data.reply });
-            } else {
-                addBotMessage(t('chat.error'));
-            }
+            const data = await response.json();
+                if (data.reply) {
+                    addBotMessage(data.reply);
+                    if (!data.reply.startsWith('[DEBUG]')) {
+                        history.push({ role: 'user', text: text });
+                        history.push({ role: 'model', text: data.reply });
+                    }
+                } else {
+                    addBotMessage(t('chat.error'));
+                }
         } catch (error) {
             removeTyping();
-            addBotMessage(t('chat.error'));
+            addBotMessage('[DEBUG] Network error: ' + error.message);
         }
 
         isProcessing = false;

@@ -17,7 +17,7 @@ app.post('/api/chat', async (req, res) => {
         const apiUrl = process.env.AI_API_URL;
 
         if (!apiKey || !apiUrl) {
-            return res.status(500).json({ error: 'API key or URL not configured' });
+            return res.status(500).json({ reply: '[DEBUG] Missing environment variables: ' + (!apiKey ? 'AI_API_KEY ' : '') + (!apiUrl ? 'AI_API_URL' : '') });
         }
 
         const systemPrompt = `Você é o Assistente FPTA, o assistente de IA da plataforma de gestão da Federação Portuguesa de Tiro com Arco (FPTA). Você é fluente em Português de Portugal e Inglês. Responda sempre no idioma em que for perguntado.
@@ -86,7 +86,9 @@ Se lhe perguntarem sobre dados específicos de atletas que não conhece, indique
         if (!response.ok) {
             const errorData = await response.text();
             console.error('Gemini API error:', errorData);
-            return res.status(response.status).json({ error: 'AI service error', details: errorData });
+            let errorMsg = errorData;
+            try { errorMsg = JSON.stringify(JSON.parse(errorData), null, 2); } catch(e) {}
+            return res.json({ reply: `[DEBUG] AI API Error ${response.status}: ${errorMsg}` });
         }
 
         const data = await response.json();
@@ -95,11 +97,11 @@ Se lhe perguntarem sobre dados específicos de atletas que não conhece, indique
             const reply = data.candidates[0].content.parts[0].text;
             res.json({ reply });
         } else {
-            res.json({ reply: 'Desculpe, não consegui processar o seu pedido. Tente novamente.' });
+            res.json({ reply: '[DEBUG] Unexpected API response: ' + JSON.stringify(data) });
         }
     } catch (error) {
         console.error('Chat API error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.json({ reply: '[DEBUG] Server error: ' + error.message });
     }
 });
 
