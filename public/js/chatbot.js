@@ -113,16 +113,23 @@ const Chatbot = (() => {
 
             removeTyping();
 
-            const data = await response.json();
-                if (data.reply) {
-                    addBotMessage(data.reply);
-                    if (!data.reply.startsWith('[DEBUG]')) {
-                        history.push({ role: 'user', text: text });
-                        history.push({ role: 'model', text: data.reply });
-                    }
-                } else {
-                    addBotMessage(t('chat.error'));
+            const rawText = await response.text();
+            let data;
+            try {
+                data = rawText ? JSON.parse(rawText) : { reply: '[DEBUG] Empty response from server (status ' + response.status + ')' };
+            } catch (e) {
+                data = { reply: '[DEBUG] Non-JSON response (status ' + response.status + '): ' + rawText.substring(0, 300) };
+            }
+
+            if (data.reply) {
+                addBotMessage(data.reply);
+                if (!data.reply.startsWith('[DEBUG]')) {
+                    history.push({ role: 'user', text: text });
+                    history.push({ role: 'model', text: data.reply });
                 }
+            } else {
+                addBotMessage('[DEBUG] Unexpected data: ' + JSON.stringify(data));
+            }
         } catch (error) {
             removeTyping();
             addBotMessage('[DEBUG] Network error: ' + error.message);
